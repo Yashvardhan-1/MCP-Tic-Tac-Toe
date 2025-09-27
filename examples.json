@@ -1,0 +1,42 @@
+{
+  "play_move_center": {
+    "tool": "play_move",
+    "args": {
+      "row": 1,
+      "col": 1
+    }
+  },
+  "play_move_corner": {
+    "tool": "play_move", 
+    "args": {
+      "row": 0,
+      "col": 0
+    }
+  },
+  "show_board": {
+    "tool": "show_board",
+    "args": {}
+  },
+  "get_state": {
+    "tool": "get_state",
+    "args": {}
+  },
+  "reset_game": {
+    "tool": "reset_game",
+    "args": {}
+  },
+  "greet_friendly": {
+    "tool": "greet_user",
+    "args": {
+      "name": "Alice",
+      "style": "friendly"
+    }
+  },
+  "greet_formal": {
+    "tool": "greet_user",
+    "args": {
+      "name": "Dr. Smith", 
+      "style": "formal"
+    }
+  }
+}

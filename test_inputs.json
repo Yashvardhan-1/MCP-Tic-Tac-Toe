@@ -1,0 +1,145 @@
+{
+  "test_scenarios": {
+    "single_moves": [
+      {
+        "description": "Play in top-left corner",
+        "tool": "play_move",
+        "input": {
+          "row": 0,
+          "col": 0
+        }
+      },
+      {
+        "description": "Play in center",
+        "tool": "play_move", 
+        "input": {
+          "row": 1,
+          "col": 1
+        }
+      },
+      {
+        "description": "Play in bottom-right corner",
+        "tool": "play_move",
+        "input": {
+          "row": 2,
+          "col": 2
+        }
+      }
+    ],
+    
+    "winning_sequence": [
+      {
+        "description": "X wins with top row",
+        "moves": [
+          {"row": 0, "col": 0},
+          {"row": 1, "col": 0},
+          {"row": 0, "col": 1},
+          {"row": 1, "col": 1},
+          {"row": 0, "col": 2}
+        ]
+      }
+    ],
+    
+    "draw_sequence": [
+      {
+        "description": "Game ends in draw",
+        "moves": [
+          {"row": 0, "col": 0},
+          {"row": 0, "col": 1},
+          {"row": 0, "col": 2},
+          {"row": 1, "col": 1},
+          {"row": 1, "col": 0},
+          {"row": 1, "col": 2},
+          {"row": 2, "col": 1},
+          {"row": 2, "col": 0},
+          {"row": 2, "col": 2}
+        ]
+      }
+    ],
+
+    "tool_calls": [
+      {
+        "description": "Show current board",
+        "tool": "show_board",
+        "input": {}
+      },
+      {
+        "description": "Get game state",
+        "tool": "get_state", 
+        "input": {}
+      },
+      {
+        "description": "Reset game",
+        "tool": "reset_game",
+        "input": {}
+      }
+    ],
+
+    "prompt_tests": [
+      {
+        "description": "Friendly greeting",
+        "tool": "greet_user",
+        "input": {
+          "name": "Alice",
+          "style": "friendly"
+        }
+      },
+      {
+        "description": "Formal greeting", 
+        "tool": "greet_user",
+        "input": {
+          "name": "Dr. Smith",
+          "style": "formal"
+        }
+      },
+      {
+        "description": "Casual greeting",
+        "tool": "greet_user", 
+        "input": {
+          "name": "Bob",
+          "style": "casual"
+        }
+      }
+    ]
+  },
+
+  "mcp_inspector_examples": {
+    "play_move_examples": [
+      {"row": 0, "col": 0},
+      {"row": 1, "col": 1}, 
+      {"row": 2, "col": 2}
+    ],
+    
+    "greet_user_examples": [
+      {
+        "name": "Test User",
+        "style": "friendly"
+      },
+      {
+        "name": "Professional",
+        "style": "formal" 
+      }
+    ]
+  },
+
+  "invalid_inputs": [
+    {
+      "description": "Invalid row (out of bounds)",
+      "tool": "play_move",
+      "input": {
+        "row": 5,
+        "col": 1
+      },
+      "expected": "Should cause an error"
+    },
+    {
+      "description": "Invalid column (negative)",
+      "tool": "play_move", 
+      "input": {
+        "row": 1,
+        "col": -1
+      },
+      "expected": "Should cause an error"
+    }
+  ]
+}
