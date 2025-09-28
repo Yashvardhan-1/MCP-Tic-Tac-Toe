@@ -143,7 +143,7 @@ if __name__ == "__main__":
   # Check if we're running as MCP server or JSON CLI
   if len(sys.argv) > 1 and sys.argv[1] == "--mcp":
     print("Starting Tic-Tac-Toe MCP server...")
-    mcp.run_stdio()
+    mcp.run()
   else:
     # Handle JSON request from stdin
     handle_json_request()
