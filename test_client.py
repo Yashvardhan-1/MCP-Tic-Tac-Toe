@@ -1,63 +1,74 @@
+import asyncio, json
 from client import MCPClient
-import time
 
-MCP_SERVER_CMD = ["uv", "run", "python", "main.py", "--mcp"]
+def pretty_print(label, data):
+  """Extract and display clean content from MCP results"""
+  print(f"\n🔍 {label}:")
+    
+  if not data:
+    print("  None")
+    return
+  
+  # Handle MCP result format - data.content is a list of TextContent objects
+  if hasattr(data, 'content') and data.content:
+    for item in data.content:
+      if hasattr(item, 'text'):
+        try:
+          # Try to parse as JSON for pretty formatting
+          parsed = json.loads(item.text)
+          print(json.dumps(parsed, indent=2))
+        except json.JSONDecodeError:
+          # If not JSON, print the text directly (like board display)
+          print(item.text)
+      else:
+        print(f"  {item}")
+  else:
+      print(f"  {data}")
 
-# Test the MCPClient
-def test_mcp_client():
-    """
-    Simple test of MCPClient functionality
-    """
-    print("🧪 Testing MCPClient...")
+async def test_mcp_client():
+  """Test the MCPClient class"""
+  print("🧪 Testing MCPClient...")
+  
+  client = MCPClient()
+  
+  try:
+      # Start the client
+    if not await client.start():
+      print("❌ Client startup failed")
+      return False
+  
+    # Test 1: Reset game
+    print("\n1️⃣ Testing reset_game...")
+    result = await client.reset_game()
+    pretty_print("Reset Result", result)
     
-    # Create client
-    client = MCPClient(MCP_SERVER_CMD)
+    # Test 2: Show board
+    print("\n2️⃣ Testing show_board...")
+    board = await client.show_board()
+    pretty_print("Board", board)
     
-    try:
-        # Test 1: Start server
-        print("\n1️⃣ Testing server startup...")
-        if not client.start_server():
-            print("❌ Server startup failed")
-            return False
-        
-        # Give server time to initialize
-        time.sleep(2)
-        
-        # Test 2: Reset game
-        print("\n2️⃣ Testing reset_game...")
-        result = client.reset_game()
-        print(f"Reset result: {result}")
-        
-        # # Test 3: Show board
-        # print("\n3️⃣ Testing show_board...")
-        # board = client.show_board()
-        # print(f"Board: {board}")
-        
-        # # Test 4: Get state
-        # print("\n4️⃣ Testing get_state...")
-        # state = client.get_state()
-        # print(f"State: {state}")
-        
-        # # Test 5: Make a move
-        # print("\n5️⃣ Testing play_move...")
-        # move_result = client.play_move(1, 1)  # Center
-        # print(f"Move result: {move_result}")
-        
-        # # Test 6: Show board after move
-        # print("\n6️⃣ Testing board after move...")
-        # updated_board = client.show_board()
-        # print(f"Updated board: {updated_board}")
-        
-        # print("\n✅ All tests completed!")
-        return True
-        
-    except Exception as e:
-        print(f"❌ Test failed with error: {e}")
-        return False
-        
-    finally:
-        # Always cleanup
-        client.stop_server()
+    # Test 3: Make a move
+    print("\n3️⃣ Testing play_move...")
+    move_result = await client.play_move(1, 1)  # Center
+    pretty_print("Move result", move_result)
+    
+    # Test 4: Show updated board
+    print("\n4️⃣ Testing updated board...")
+    updated_board = await client.show_board()
+    pretty_print("Updated board", updated_board)
+    
+    print("\n✅ All tests completed!")
+    return True
+      
+  except Exception as e:
+    print(f"❌ Test failed with error: {e}")
+    import traceback
+    traceback.print_exc()
+    return False
+      
+  finally:
+    # Always cleanup
+    await client.close()
 
 if __name__ == "__main__":
-    test_mcp_client()
+    asyncio.run(test_mcp_client())

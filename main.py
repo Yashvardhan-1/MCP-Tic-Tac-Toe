@@ -1,5 +1,11 @@
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel
+import logging, os
+
+logging.getLogger("mcp.server.fastmcp").setLevel(logging.CRITICAL)
+logging.getLogger("mcp").setLevel(logging.CRITICAL) 
+logging.getLogger("fastmcp").setLevel(logging.CRITICAL)
+os.environ["PYTHONUNBUFFERED"] = "0"
 
 class TicTacToe:
   def __init__(self):
