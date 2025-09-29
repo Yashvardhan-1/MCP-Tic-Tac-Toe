@@ -1,29 +1,7 @@
-import asyncio, json
+import asyncio
 from client import MCPClient
 
-def pretty_print(label, data):
-  """Extract and display clean content from MCP results"""
-  print(f"\n🔍 {label}:")
-    
-  if not data:
-    print("  None")
-    return
-  
-  # Handle MCP result format - data.content is a list of TextContent objects
-  if hasattr(data, 'content') and data.content:
-    for item in data.content:
-      if hasattr(item, 'text'):
-        try:
-          # Try to parse as JSON for pretty formatting
-          parsed = json.loads(item.text)
-          print(json.dumps(parsed, indent=2))
-        except json.JSONDecodeError:
-          # If not JSON, print the text directly (like board display)
-          print(item.text)
-      else:
-        print(f"  {item}")
-  else:
-      print(f"  {data}")
+from utils import extract_result_text
 
 async def test_mcp_client():
   """Test the MCPClient class"""
@@ -40,22 +18,26 @@ async def test_mcp_client():
     # Test 1: Reset game
     print("\n1️⃣ Testing reset_game...")
     result = await client.reset_game()
-    pretty_print("Reset Result", result)
+    resutl_str = extract_result_text(result)
+    print(f"\n{resutl_str}")
     
     # Test 2: Show board
     print("\n2️⃣ Testing show_board...")
     board = await client.show_board()
-    pretty_print("Board", board)
+    board_text = extract_result_text(board)
+    print(f"\n{board_text}")
     
     # Test 3: Make a move
     print("\n3️⃣ Testing play_move...")
-    move_result = await client.play_move(1, 1)  # Center
-    pretty_print("Move result", move_result)
+    move_result = await client.play_move(1, 1)
+    move_result_text = extract_result_text(move_result)
+    print(f"\n{move_result_text}")
     
     # Test 4: Show updated board
     print("\n4️⃣ Testing updated board...")
     updated_board = await client.show_board()
-    pretty_print("Updated board", updated_board)
+    updated_board_text = extract_result_text(updated_board)
+    print(f"\n{updated_board_text}")
     
     print("\n✅ All tests completed!")
     return True
