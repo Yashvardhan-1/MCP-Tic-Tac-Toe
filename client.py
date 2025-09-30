@@ -1,4 +1,6 @@
 from anthropic import Anthropic
+from utils import extract_result_text
+import json
 
 ANTHROPIC_MODEL = "claude-3-5-sonnet-latest"  
 HUMAN_PLAYS = "X"
@@ -79,14 +81,14 @@ class MCPClient:
   async def show_board(self):
     """Get board display"""
     result = await self.call_tool("show_board", {})
-    return result.content if result else None
+    return extract_result_text(result.content) if result else None
   
   async def get_state(self):
     """Get game state"""
     result = await self.call_tool("get_state", {})
-    return result.content if result else None
+    return extract_result_text(result.content) if result else None
 
   async def reset_game(self):
     """Reset the game"""
     result = await self.call_tool("reset_game", {})
-    return result.content if result else None
+    return extract_result_text(result.content) if result else None
