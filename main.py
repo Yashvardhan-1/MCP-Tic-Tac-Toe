@@ -67,6 +67,8 @@ class TicTacToe:
     }
   
   def play_move(self, row, col):
+    if self.board[row][col] != " ":
+      return None
     self.board[row][col] = self.current_player
     self.current_player = "O" if self.current_player == "X" else "X"
     self.winner = self.check_winner()

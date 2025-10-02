@@ -52,7 +52,7 @@ class Game:
     # Return coordinates
     row = int(input("Enter the row (0-2): "))
     col = int(input("Enter the column (0-2): "))
-    return await self.make_move(row, col)
+    return (row, col)
   
   async def make_move(self, row, col):
     """
@@ -179,7 +179,7 @@ class Game:
       print("❌ No available moves found!")
       return None
   
-  def format_claude_prompt(self, board, game_state, move_history):
+  def format_claude_prompt(self):
     """
     Format the current game state into a prompt for Claude
     
@@ -192,13 +192,11 @@ class Game:
       str: Formatted prompt for Claude
     """
     # Extract key info from game state
-    current_player = game_state.get('current_player', 'O')
-    winner = game_state.get('winner')
-    game_over = game_state.get('game_over', False)
+    current_player = self.game_state['current_player']
     
     prompt = f"""You are playing Tic-Tac-Toe against a human opponent.
       GAME STATUS:
-      {board}
+      {self.game_state['board']}
 
       GAME RULES:
       - You are playing as '{AI_PLAYS}' (AI)
@@ -218,9 +216,9 @@ class Game:
           prompt += f"{i} | {' | '.join(row)} |\n"
     
     # Add move history context
-    if move_history:
+    if self.game_history:
       prompt += f"\nMOVE HISTORY:\n"
-      for i, (player, row, col) in enumerate(move_history[-5:]):  # Last 5 moves
+      for i, (player, row, col) in enumerate(self.game_history[-5:]):  # Last 5 moves
           prompt += f"{i+1}. {player} played at ({row},{col})\n"
     
     # Add strategy context based on game state
@@ -334,20 +332,16 @@ class Game:
           move = await self.make_human_move()
         else:
           print("🤖 AI's turn!")
-          current_board = await self.mcp_client.show_board()
-          move = await self.get_ai_move(current_board, game_state)
-          
-        # # Make the move
-        # print(move)
-        # if move:
-        #   row, col = move
-        #   result = await self.make_move(row, col)
-        #   if result:
-        #     self.game_history.append((game_state['current_player'], row, col))
-        #   else:
-        #     print("⚠️ Invalid move, try again.")
-      # Check again if the game is over after the move
-      game_over = await self.check_game_over()
+          move = await self.get_ai_move()
+        
+        if move:
+          row, col = move
+          result = await self.make_move(row, col)
+          if result:
+            self.game_history.append((self.game_state['current_player'], row, col))
+          else:
+            print("⚠️ Invalid move, try again.")
+        game_over = await self.check_game_over()
   
     except Exception as e:
         print(f"❌ Error during game loop: {e}")
